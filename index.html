@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bull Pen — Stock Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0b0d;
+    --bg2: #111318;
+    --bg3: #181c24;
+    --card: #13161e;
+    --border: rgba(255,255,255,0.07);
+    --accent: #00e5a0;
+    --accent2: #00b37a;
+    --gold: #f0b429;
+    --red: #ff4d4d;
+    --text: #f0f0f0;
+    --muted: #6b7280;
+    --subtle: #9ca3af;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .display { font-family: 'Syne', sans-serif; }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,11,13,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--text); }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .nav-links li { cursor: pointer; transition: color 0.2s; }
+  .nav-links li:hover { color: var(--text); }
+  .nav-cta { background: var(--accent); color: #000; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; border: none; padding: 0.6rem 1.4rem; cursor: pointer; transition: background 0.2s, transform 0.15s; border-radius: 4px; }
+  .nav-cta:hover { background: #00ffb0; transform: translateY(-1px); }
+
+  .ticker-wrap { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0.5rem 0; overflow: hidden; white-space: nowrap; }
+  .ticker-inner { display: inline-flex; gap: 0; animation: ticker 28s linear infinite; }
+  .ticker-item { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0 2.5rem; font-size: 0.72rem; letter-spacing: 0.04em; border-right: 1px solid var(--border); }
+  .ticker-sym { color: var(--subtle); font-weight: 500; }
+  .ticker-price { color: var(--text); }
+  .up { color: var(--accent); }
+  .down { color: var(--red); }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; padding: 6rem 3rem 5rem; max-width: 1100px; margin: 0 auto; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+  .eyebrow-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.5; transform:scale(1.4); } }
+  h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+  h1 .accent { color: var(--accent); }
+  .hero-desc { color: var(--subtle); font-size: 0.95rem; max-width: 440px; margin-bottom: 2.5rem; line-height: 1.8; }
+  .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .btn-primary { background: var(--accent); color: #000; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; border: none; padding: 0.85rem 2rem; cursor: pointer; transition: all 0.2s; border-radius: 4px; }
+  .btn-primary:hover { background: #00ffb0; transform: translateY(-2px); }
+  .btn-ghost { background: transparent; color: var(--subtle); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.04em; border: 1px solid var(--border); padding: 0.85rem 2rem; cursor: pointer; transition: all 0.2s; border-radius: 4px; }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .chart-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem 0.75rem; border-bottom: 1px solid var(--border); }
+  .chart-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--text); }
+  .chart-badge { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(0,229,160,0.12); color: var(--accent); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,229,160,0.25); }
+  .chart-meta { display: flex; gap: 1.5rem; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border); }
+  .meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .meta-label { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .meta-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; }
+  .meta-val.green { color: var(--accent); }
+  .meta-val.gold { color: var(--gold); }
+  .chart-body { padding: 1.25rem; }
+  svg.sparkline { width: 100%; height: 120px; }
+
+  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); }
+  .stat-cell { padding: 2rem 1.5rem; border-right: 1px solid var(--border); text-align: center; }
+  .stat-cell:last-child { border-right: none; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--accent); display: block; }
+  .stat-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  .section { padding: 5rem 3rem; max-width: 1100px; margin: 0 auto; }
+  .section-tag { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 1rem; }
+  h2 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 3rem; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .step-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.75rem; transition: border-color 0.2s; }
+  .step-card:hover { border-color: rgba(0,229,160,0.3); }
+  .step-num { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: rgba(0,229,160,0.15); letter-spacing: -0.04em; margin-bottom: 0.75rem; line-height: 1; }
+  .step-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; }
+  .step-desc { font-size: 0.82rem; color: var(--subtle); line-height: 1.7; }
+
+  .picks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .pick-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; transition: transform 0.2s, border-color 0.2s; }
+  .pick-card:hover { transform: translateY(-3px); border-color: rgba(0,229,160,0.25); }
+  .pick-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+  .pick-sym { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
+  .pick-change { font-size: 0.7rem; font-weight: 500; padding: 3px 8px; border-radius: 4px; }
+  .pick-change.up { background: rgba(0,229,160,0.12); color: var(--accent); }
+  .pick-change.down { background: rgba(255,77,77,0.12); color: var(--red); }
+  .pick-name { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.6rem; }
+  .pick-price { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; }
+  .pick-bar-wrap { margin-top: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 4px; height: 3px; }
+  .pick-bar { height: 3px; border-radius: 4px; background: var(--accent); }
+  .pick-bar.red-bar { background: var(--red); }
+
+  .join-band { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 5rem 3rem; text-align: center; }
+  .join-band h2 { margin-bottom: 1rem; }
+  .join-band p { color: var(--subtle); font-size: 0.9rem; max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.8; }
+  .join-form { display: flex; gap: 0.75rem; justify-content: center; max-width: 440px; margin: 0 auto; flex-wrap: wrap; }
+  .join-form input { flex: 1; min-width: 200px; background: var(--bg3); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: 4px; outline: none; transition: border-color 0.2s; }
+  .join-form input:focus { border-color: rgba(0,229,160,0.5); }
+  .join-form input::placeholder { color: var(--muted); }
+
+  footer { padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
+  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem; color: var(--text); }
+  .footer-logo span { color: var(--accent); }
+  .footer-note { font-size: 0.65rem; color: var(--muted); opacity: 0.6; max-width: 360px; text-align: right; }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 3rem 1.5rem; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: 1fr; }
+    .picks-grid { grid-template-columns: 1fr 1fr; }
+    .section { padding: 3rem 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+    .footer-note { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo display">the bull<span>pen</span></div>
+  <ul class="nav-links">
+    <li>About</li><li>Picks</li><li>Members</li><li>Performance</li>
+  </ul>
+  <button class="nav-cta">Join the Club</button>
+</nav>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<div class="hero">
+  <div>
+    <div class="hero-eyebrow"><span class="eyebrow-dot"></span> Recreational Stock Club</div>
+    <h1 class="display">Invest <span class="accent">smarter,</span><br>together.</h1>
+    <p class="hero-desc">A community-driven stock club where members pool knowledge, debate picks, and learn the markets — without the pressure of the pros.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Join Now — It's Free</button>
+      <button class="btn-ghost">See Our Picks →</button>
+    </div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-title">Club Portfolio YTD</span>
+      <span class="chart-badge">Live</span>
+    </div>
+    <div class="chart-meta">
+      <div class="meta-item"><span class="meta-label">Total Return</span><span class="meta-val green">+18.4%</span></div>
+      <div class="meta-item"><span class="meta-label">Best Pick</span><span class="meta-val gold">NVDA</span></div>
+      <div class="meta-item"><span class="meta-label">Members</span><span class="meta-val">24</span></div>
+    </div>
+    <div class="chart-body">
+      <svg class="sparkline" viewBox="0 0 340 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00e5a0" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#00e5a0" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,95 L20,88 L45,82 L65,75 L80,72 L100,65 L120,58 L140,62 L155,55 L175,48 L195,42 L215,38 L235,30 L255,25 L275,20 L295,18 L320,12 L340,8" fill="none" stroke="#00e5a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M0,95 L20,88 L45,82 L65,75 L80,72 L100,65 L120,58 L140,62 L155,55 L175,48 L195,42 L215,38 L235,30 L255,25 L275,20 L295,18 L320,12 L340,8 L340,120 L0,120 Z" fill="url(#fillGrad)"/>
+        <text x="4" y="112" font-family="DM Mono" font-size="9" fill="#6b7280">Jan</text>
+        <text x="118" y="112" font-family="DM Mono" font-size="9" fill="#6b7280">Apr</text>
+        <text x="240" y="112" font-family="DM Mono" font-size="9" fill="#6b7280">Jul</text>
+        <circle cx="340" cy="8" r="4" fill="#00e5a0"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-cell"><span class="stat-num">24</span><span class="stat-label">Active Members</span></div>
+  <div class="stat-cell"><span class="stat-num">+18.4%</span><span class="stat-label">YTD Returns</span></div>
+  <div class="stat-cell"><span class="stat-num">47</span><span class="stat-label">Picks Made</span></div>
+  <div class="stat-cell"><span class="stat-num">$0</span><span class="stat-label">Membership Fee</span></div>
+</div>
+
+<div class="section">
+  <span class="section-tag">How it works</span>
+  <h2 class="display">Simple by design.</h2>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num display">01</div>
+      <div class="step-title display">Join the Club</div>
+      <p class="step-desc">Sign up for free and get access to our member forum, past picks, and portfolio tracker. No experience required.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num display">02</div>
+      <div class="step-title display">Pitch Your Pick</div>
+      <p class="step-desc">Every month, members submit stock pitches. We debate the thesis, do due diligence, and vote on which ones to track.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num display">03</div>
+      <div class="step-title display">Track & Learn</div>
+      <p class="step-desc">Watch picks play out in real time. Win or lose, we break down the outcome together so everyone gets smarter.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="padding-top:0">
+  <span class="section-tag">Recent Picks</span>
+  <h2 class="display">What we're watching.</h2>
+  <div class="picks-grid" id="picks-grid"></div>
+</div>
+
+<div class="join-band">
+  <h2 class="display">Ready to invest<br><span style="color:var(--accent)">with the crew?</span></h2>
+  <p>Drop your email and we'll send you the next meeting invite. No spam. Just stocks, debate, and the occasional bad pun.</p>
+  <div class="join-form">
+    <input type="email" placeholder="your@email.com" />
+    <button class="btn-primary">Join Now</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo display">the bull<span>pen</span></div>
+  <div class="footer-note">For educational & recreational use only. Nothing here is financial advice. Always do your own research.</div>
+</footer>
+
+<script>
+const tickers = [
+  ['AAPL','$218.40','+0.9%',true],['NVDA','$134.70','+2.4%',true],['TSLA','$178.20','-1.2%',false],
+  ['MSFT','$424.80','+0.6%',true],['AMZN','$198.60','+1.1%',true],['META','$556.30','+0.3%',true],
+  ['GOOG','$184.90','-0.4%',false],['AMD','$162.40','+3.1%',true],['INTC','$21.80','-0.8%',false],
+  ['SPY','$548.20','+0.5%',true]
+];
+const tickerEl = document.getElementById('ticker');
+[...tickers,...tickers].forEach(([sym,price,chg,up]) => {
+  const el = document.createElement('span');
+  el.className = 'ticker-item';
+  el.innerHTML = `<span class="ticker-sym">${sym}</span><span class="ticker-price">${price}</span><span class="${up?'up':'down'}">${chg}</span>`;
+  tickerEl.appendChild(el);
+});
+
+const picks = [
+  {sym:'NVDA',name:'Nvidia Corp',price:'$134.70',chg:'+24.1%',up:true,bar:82},
+  {sym:'MSFT',name:'Microsoft',price:'$424.80',chg:'+11.3%',up:true,bar:67},
+  {sym:'PLTR',name:'Palantir Tech',price:'$85.20',chg:'+38.6%',up:true,bar:91},
+  {sym:'TSLA',name:'Tesla Inc',price:'$178.20',chg:'-8.4%',up:false,bar:35},
+  {sym:'AMZN',name:'Amazon',price:'$198.60',chg:'+15.7%',up:true,bar:74},
+  {sym:'INTC',name:'Intel Corp',price:'$21.80',chg:'-18.2%',up:false,bar:22},
+];
+const grid = document.getElementById('picks-grid');
+picks.forEach(p => {
+  grid.innerHTML += `<div class="pick-card"><div class="pick-top"><span class="pick-sym display">${p.sym}</span><span class="pick-change ${p.up?'up':'down'}">${p.chg}</span></div><div class="pick-name">${p.name}</div><div class="pick-price display">${p.price}</div><div class="pick-bar-wrap"><div class="pick-bar ${p.up?'':'red-bar'}" style="width:${p.bar}%"></div></div></div>`;
+});
+</script>
+</body>
+</html>
