@@ -126,6 +126,9 @@
   .join-form input { flex: 1; min-width: 200px; background: var(--bg3); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: 4px; outline: none; transition: border-color 0.2s; }
   .join-form input:focus { border-color: rgba(0,229,160,0.5); }
   .join-form input::placeholder { color: var(--muted); }
+  .form-msg { margin-top: 1rem; font-size: 0.82rem; letter-spacing: 0.04em; min-height: 1.2em; }
+  .form-msg.success { color: var(--accent); }
+  .form-msg.error { color: var(--red); }
 
   footer { padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
   .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem; color: var(--text); }
@@ -236,10 +239,11 @@
 <div class="join-band">
   <h2 class="display">Ready to invest<br><span style="color:var(--accent)">with the crew?</span></h2>
   <p>Drop your email and we'll send you the next meeting invite. No spam. Just stocks, debate, and the occasional bad pun.</p>
-  <div class="join-form">
-    <input type="email" placeholder="your@email.com" />
-    <button class="btn-primary">Join Now</button>
-  </div>
+  <form class="join-form" id="join-form" novalidate>
+    <input type="email" id="join-email" placeholder="your@email.com" required />
+    <button type="submit" class="btn-primary" id="join-btn">Join Now</button>
+  </form>
+  <p class="form-msg" id="form-msg"></p>
 </div>
 
 <footer>
@@ -273,6 +277,43 @@ const picks = [
 const grid = document.getElementById('picks-grid');
 picks.forEach(p => {
   grid.innerHTML += `<div class="pick-card"><div class="pick-top"><span class="pick-sym display">${p.sym}</span><span class="pick-change ${p.up?'up':'down'}">${p.chg}</span></div><div class="pick-name">${p.name}</div><div class="pick-price display">${p.price}</div><div class="pick-bar-wrap"><div class="pick-bar ${p.up?'':'red-bar'}" style="width:${p.bar}%"></div></div></div>`;
+});
+
+// Formspree email signup
+const joinForm = document.getElementById('join-form');
+const joinBtn  = document.getElementById('join-btn');
+const formMsg  = document.getElementById('form-msg');
+
+joinForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('join-email').value.trim();
+  if (!email) return;
+
+  joinBtn.textContent = 'Sending...';
+  joinBtn.disabled = true;
+  formMsg.textContent = '';
+  formMsg.className = 'form-msg';
+
+  try {
+    const res = await fetch('https://formspree.io/f/xvznowpr', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    if (res.ok) {
+      formMsg.textContent = '✓ You\'re in! We\'ll be in touch before the next meeting.';
+      formMsg.className = 'form-msg success';
+      joinForm.reset();
+    } else {
+      throw new Error('Server error');
+    }
+  } catch {
+    formMsg.textContent = '✗ Something went wrong. Try again or email us directly.';
+    formMsg.className = 'form-msg error';
+  } finally {
+    joinBtn.textContent = 'Join Now';
+    joinBtn.disabled = false;
+  }
 });
 </script>
 </body>
