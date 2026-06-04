@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Picks & Debate — The Bull Pen</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="logo display" href="index.html">the bull<span>pen</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">About</a></li>
+    <li><a href="picks.html" class="active">Picks</a></li>
+    <li><a href="#">Members</a></li>
+    <li><a href="#">Performance</a></li>
+  </ul>
+  <a class="nav-cta" href="index.html#join">Join the Club</a>
+</nav>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<div class="page-hero">
+  <span class="section-tag">Picks & Debate</span>
+  <h2 class="display">Bull vs. <span style="color:var(--red)">Bear.</span></h2>
+  <p style="color:var(--subtle);font-size:0.9rem;max-width:520px;margin-bottom:2.5rem;line-height:1.8;">
+    Pick a stock, choose your side, and make your case. Posts are live — everyone in the club sees them in real time.
+  </p>
+</div>
+
+<div class="section" style="padding-top:0">
+
+  <div class="debate-tabs" id="debate-tabs"></div>
+
+  <div class="debate-board">
+    <div class="debate-col bull-col">
+      <div class="col-header">🟢 Bullish</div>
+      <div id="bull-posts"></div>
+    </div>
+    <div class="debate-col bear-col">
+      <div class="col-header">🔴 Bearish</div>
+      <div id="bear-posts"></div>
+    </div>
+  </div>
+
+  <div class="debate-form-wrap">
+    <h3>Make your case</h3>
+    <form id="debate-form" novalidate>
+      <input type="text" id="debate-name" placeholder="Your name" maxlength="40" />
+      <div class="side-toggle">
+        <button type="button" class="side-btn bull-btn active" data-side="bull">🟢 Bull</button>
+        <button type="button" class="side-btn bear-btn" data-side="bear">🔴 Bear</button>
+      </div>
+      <textarea id="debate-thesis" placeholder="Make your case for this stock..." maxlength="500"></textarea>
+      <button type="submit" class="btn-primary">Post</button>
+      <p class="debate-msg" id="debate-msg"></p>
+    </form>
+  </div>
+
+</div>
+
+<footer>
+  <a class="footer-logo display" href="index.html">the bull<span>pen</span></a>
+  <div class="footer-note">For educational & recreational use only. Nothing here is financial advice. Always do your own research.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="main.js" defer></script>
+<script src="debate.js" defer></script>
+</body>
+</html>

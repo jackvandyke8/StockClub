@@ -5,197 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Bull Pen — Stock Club</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0a0b0d;
-    --bg2: #111318;
-    --bg3: #181c24;
-    --card: #13161e;
-    --border: rgba(255,255,255,0.07);
-    --accent: #00e5a0;
-    --accent2: #00b37a;
-    --gold: #f0b429;
-    --red: #ff4d4d;
-    --text: #f0f0f0;
-    --muted: #6b7280;
-    --subtle: #9ca3af;
-  }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 15px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  .display { font-family: 'Syne', sans-serif; }
-
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.2rem 3rem;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    background: rgba(10,11,13,0.92);
-    backdrop-filter: blur(12px);
-    z-index: 100;
-  }
-  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--text); }
-  .logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 2rem; list-style: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .nav-links li { cursor: pointer; transition: color 0.2s; }
-  .nav-links li:hover { color: var(--text); }
-  .nav-cta { background: var(--accent); color: #000; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; border: none; padding: 0.6rem 1.4rem; cursor: pointer; transition: background 0.2s, transform 0.15s; border-radius: 4px; }
-  .nav-cta:hover { background: #00ffb0; transform: translateY(-1px); }
-
-  .ticker-wrap { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0.5rem 0; overflow: hidden; white-space: nowrap; }
-  .ticker-inner { display: inline-flex; gap: 0; animation: ticker 28s linear infinite; }
-  .ticker-item { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0 2.5rem; font-size: 0.72rem; letter-spacing: 0.04em; border-right: 1px solid var(--border); }
-  .ticker-sym { color: var(--subtle); font-weight: 500; }
-  .ticker-price { color: var(--text); }
-  .up { color: var(--accent); }
-  .down { color: var(--red); }
-  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-  .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; padding: 6rem 3rem 5rem; max-width: 1100px; margin: 0 auto; }
-  .hero-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
-  .eyebrow-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.5; transform:scale(1.4); } }
-  h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
-  h1 .accent { color: var(--accent); }
-  .hero-desc { color: var(--subtle); font-size: 0.95rem; max-width: 440px; margin-bottom: 2.5rem; line-height: 1.8; }
-  .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-  .btn-primary { background: var(--accent); color: #000; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; border: none; padding: 0.85rem 2rem; cursor: pointer; transition: all 0.2s; border-radius: 4px; }
-  .btn-primary:hover { background: #00ffb0; transform: translateY(-2px); }
-  .btn-ghost { background: transparent; color: var(--subtle); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.04em; border: 1px solid var(--border); padding: 0.85rem 2rem; cursor: pointer; transition: all 0.2s; border-radius: 4px; }
-  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
-
-  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .chart-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem 0.75rem; border-bottom: 1px solid var(--border); }
-  .chart-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--text); }
-  .chart-badge { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(0,229,160,0.12); color: var(--accent); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,229,160,0.25); }
-  .chart-meta { display: flex; gap: 1.5rem; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border); }
-  .meta-item { display: flex; flex-direction: column; gap: 2px; }
-  .meta-label { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .meta-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; }
-  .meta-val.green { color: var(--accent); }
-  .meta-val.gold { color: var(--gold); }
-  .chart-body { padding: 1.25rem; }
-  svg.sparkline { width: 100%; height: 120px; }
-
-  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); }
-  .stat-cell { padding: 2rem 1.5rem; border-right: 1px solid var(--border); text-align: center; }
-  .stat-cell:last-child { border-right: none; }
-  .stat-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--accent); display: block; }
-  .stat-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
-
-  .section { padding: 5rem 3rem; max-width: 1100px; margin: 0 auto; }
-  .section-tag { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 1rem; }
-  h2 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 3rem; }
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-  .step-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.75rem; transition: border-color 0.2s; }
-  .step-card:hover { border-color: rgba(0,229,160,0.3); }
-  .step-num { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: rgba(0,229,160,0.15); letter-spacing: -0.04em; margin-bottom: 0.75rem; line-height: 1; }
-  .step-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; }
-  .step-desc { font-size: 0.82rem; color: var(--subtle); line-height: 1.7; }
-
-  .picks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .pick-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; transition: transform 0.2s, border-color 0.2s; }
-  .pick-card:hover { transform: translateY(-3px); border-color: rgba(0,229,160,0.25); }
-  .pick-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
-  .pick-sym { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
-  .pick-change { font-size: 0.7rem; font-weight: 500; padding: 3px 8px; border-radius: 4px; }
-  .pick-change.up { background: rgba(0,229,160,0.12); color: var(--accent); }
-  .pick-change.down { background: rgba(255,77,77,0.12); color: var(--red); }
-  .pick-name { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.6rem; }
-  .pick-price { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; }
-  .pick-bar-wrap { margin-top: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 4px; height: 3px; }
-  .pick-bar { height: 3px; border-radius: 4px; background: var(--accent); }
-  .pick-bar.red-bar { background: var(--red); }
-
-  .join-band { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 5rem 3rem; text-align: center; }
-  .join-band h2 { margin-bottom: 1rem; }
-  .join-band p { color: var(--subtle); font-size: 0.9rem; max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.8; }
-  .join-form { display: flex; gap: 0.75rem; justify-content: center; max-width: 440px; margin: 0 auto; flex-wrap: wrap; }
-  .join-form input { flex: 1; min-width: 200px; background: var(--bg3); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: 4px; outline: none; transition: border-color 0.2s; }
-  .join-form input:focus { border-color: rgba(0,229,160,0.5); }
-  .join-form input::placeholder { color: var(--muted); }
-  .form-msg { margin-top: 1rem; font-size: 0.82rem; letter-spacing: 0.04em; min-height: 1.2em; }
-  .form-msg.success { color: var(--accent); }
-  .form-msg.error { color: var(--red); }
-
-  footer { padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
-  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem; color: var(--text); }
-  .footer-logo span { color: var(--accent); }
-  .footer-note { font-size: 0.65rem; color: var(--muted); opacity: 0.6; max-width: 360px; text-align: right; }
-
-  /* Debate Thread */
-  .debate-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
-  .debate-tab { background: var(--card); border: 1px solid var(--border); color: var(--muted); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.06em; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
-  .debate-tab:hover { border-color: rgba(0,229,160,0.3); color: var(--text); }
-  .debate-tab.active { background: rgba(0,229,160,0.1); border-color: rgba(0,229,160,0.5); color: var(--accent); }
-
-  .debate-board { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-  .debate-col { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .col-header { padding: 0.85rem 1.25rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
-  .bull-col .col-header { color: var(--accent); }
-  .bear-col .col-header { color: var(--red); }
-
-  .debate-post { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
-  .debate-post:last-child { border-bottom: none; }
-  .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
-  .post-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.82rem; }
-  .bull .post-name { color: var(--accent); }
-  .bear .post-name { color: var(--red); }
-  .post-date { font-size: 0.68rem; color: var(--muted); }
-  .post-thesis { font-size: 0.82rem; color: var(--subtle); line-height: 1.7; }
-  .no-posts { padding: 1.5rem 1.25rem; font-size: 0.78rem; color: var(--muted); font-style: italic; }
-
-  .debate-form-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; }
-  .debate-form-wrap h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 1.25rem; }
-  #debate-form { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-  #debate-form input, #debate-form textarea { background: var(--bg3); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: 6px; outline: none; transition: border-color 0.2s; }
-  #debate-form input:focus, #debate-form textarea:focus { border-color: rgba(0,229,160,0.5); }
-  #debate-form input::placeholder, #debate-form textarea::placeholder { color: var(--muted); }
-  #debate-form textarea { grid-column: 1 / -1; resize: vertical; min-height: 90px; }
-  .side-toggle { display: flex; gap: 0.5rem; align-items: center; }
-  .side-btn { flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg3); color: var(--muted); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; }
-  .side-btn.active.bull-btn { background: rgba(0,229,160,0.12); border-color: rgba(0,229,160,0.5); color: var(--accent); }
-  .side-btn.active.bear-btn { background: rgba(255,77,77,0.12); border-color: rgba(255,77,77,0.5); color: var(--red); }
-  #debate-form .btn-primary { grid-column: 1 / -1; }
-  .debate-msg { grid-column: 1 / -1; font-size: 0.82rem; min-height: 1.2em; }
-  .debate-msg.success { color: var(--accent); }
-  .debate-msg.error { color: var(--red); }
-
-  @media (max-width: 768px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { display: none; }
-    .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 3rem 1.5rem; }
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .steps { grid-template-columns: 1fr; }
-    .picks-grid { grid-template-columns: 1fr 1fr; }
-    .debate-board { grid-template-columns: 1fr; }
-    #debate-form { grid-template-columns: 1fr; }
-    .section { padding: 3rem 1.5rem; }
-    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
-    .footer-note { text-align: center; }
-  }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <nav>
-  <div class="logo display">the bull<span>pen</span></div>
+  <a class="logo display" href="index.html">the bull<span>pen</span></a>
   <ul class="nav-links">
-    <li>About</li><li>Picks</li><li>Members</li><li>Performance</li>
+    <li><a href="index.html" class="active">About</a></li>
+    <li><a href="picks.html">Picks</a></li>
+    <li><a href="#">Members</a></li>
+    <li><a href="#">Performance</a></li>
   </ul>
-  <button class="nav-cta">Join the Club</button>
+  <a class="nav-cta" href="#join">Join the Club</a>
 </nav>
 
 <div class="ticker-wrap">
@@ -208,8 +30,8 @@
     <h1 class="display">Invest <span class="accent">smarter,</span><br>together.</h1>
     <p class="hero-desc">A community-driven stock club where members pool knowledge, debate picks, and learn the markets — without the pressure of the pros.</p>
     <div class="hero-actions">
-      <button class="btn-primary">Join Now — It's Free</button>
-      <button class="btn-ghost">See Our Picks →</button>
+      <a class="btn-primary" href="#join">Join Now — It's Free</a>
+      <a class="btn-ghost" href="picks.html">See Our Picks →</a>
     </div>
   </div>
   <div class="chart-card">
@@ -276,39 +98,7 @@
   <div class="picks-grid" id="picks-grid"></div>
 </div>
 
-<div class="section" id="debate-section">
-  <span class="section-tag">Debate Thread</span>
-  <h2 class="display">Bull vs. <span style="color:var(--red)">Bear.</span></h2>
-
-  <div class="debate-tabs" id="debate-tabs"></div>
-
-  <div class="debate-board">
-    <div class="debate-col bull-col">
-      <div class="col-header">🟢 Bullish</div>
-      <div id="bull-posts"></div>
-    </div>
-    <div class="debate-col bear-col">
-      <div class="col-header">🔴 Bearish</div>
-      <div id="bear-posts"></div>
-    </div>
-  </div>
-
-  <div class="debate-form-wrap">
-    <h3>Make your case</h3>
-    <form id="debate-form" novalidate>
-      <input type="text" id="debate-name" placeholder="Your name" maxlength="40" />
-      <div class="side-toggle">
-        <button type="button" class="side-btn bull-btn active" data-side="bull">🟢 Bull</button>
-        <button type="button" class="side-btn bear-btn" data-side="bear">🔴 Bear</button>
-      </div>
-      <textarea id="debate-thesis" placeholder="Make your case for this stock..." maxlength="500"></textarea>
-      <button type="submit" class="btn-primary">Post</button>
-      <p class="debate-msg" id="debate-msg"></p>
-    </form>
-  </div>
-</div>
-
-<div class="join-band">
+<div class="join-band" id="join">
   <h2 class="display">Ready to invest<br><span style="color:var(--accent)">with the crew?</span></h2>
   <p>Drop your email and we'll send you the next meeting invite. No spam. Just stocks, debate, and the occasional bad pun.</p>
   <form class="join-form" id="join-form" novalidate>
@@ -319,12 +109,10 @@
 </div>
 
 <footer>
-  <div class="footer-logo display">the bull<span>pen</span></div>
+  <a class="footer-logo display" href="index.html">the bull<span>pen</span></a>
   <div class="footer-note">For educational & recreational use only. Nothing here is financial advice. Always do your own research.</div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="main.js" defer></script>
-<script src="debate.js" defer></script>
 </body>
 </html>
