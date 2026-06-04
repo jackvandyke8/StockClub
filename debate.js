@@ -3,26 +3,53 @@ const SUPABASE_URL = 'https://aegbhutfgyyzukferxnz.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_GdYba_EgD7uYAn5oFlSVcg_hP2lw2N4';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const STOCKS = ['NVDA', 'MSFT', 'PLTR', 'TSLA', 'AMZN', 'INTC'];
-let activeStock = STOCKS[0];
+const DEFAULT_STOCKS = ['NVDA', 'MSFT', 'PLTR', 'TSLA', 'AMZN', 'INTC'];
+let activeStock = DEFAULT_STOCKS[0];
 let activeSide = 'bull';
+
+// --- Custom Ticker Input ---
+const tickerInput = document.getElementById('custom-ticker');
+const tickerGoBtn = document.getElementById('ticker-go');
+
+function setActiveStock(sym) {
+  activeStock = sym.toUpperCase().trim();
+  renderTabs();
+  loadPosts();
+}
+
+tickerGoBtn.addEventListener('click', () => {
+  const val = tickerInput.value.trim();
+  if (val) setActiveStock(val);
+});
+
+tickerInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = tickerInput.value.trim();
+    if (val) setActiveStock(val);
+  }
+});
 
 // --- Render Tabs ---
 function renderTabs() {
   const tabs = document.getElementById('debate-tabs');
-  tabs.innerHTML = STOCKS.map(s => `
+  const stocks = DEFAULT_STOCKS.includes(activeStock) ? DEFAULT_STOCKS : [...DEFAULT_STOCKS, activeStock];
+  tabs.innerHTML = stocks.map(s => `
     <button class="debate-tab ${s === activeStock ? 'active' : ''}" data-stock="${s}">${s}</button>
   `).join('');
   tabs.querySelectorAll('.debate-tab').forEach(btn => {
     btn.addEventListener('click', () => {
-      activeStock = btn.dataset.stock;
-      renderTabs();
-      loadPosts();
+      tickerInput.value = '';
+      setActiveStock(btn.dataset.stock);
     });
   });
 }
 
 // --- Render Posts ---
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function renderPost(post) {
   const time = new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   return `
@@ -34,10 +61,6 @@ function renderPost(post) {
       <p class="post-thesis">${escapeHtml(post.thesis)}</p>
     </div>
   `;
-}
-
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function renderPosts(posts) {
@@ -57,6 +80,11 @@ function renderPosts(posts) {
 
 // --- Load Posts ---
 async function loadPosts() {
+  const bullEl = document.getElementById('bull-posts');
+  const bearEl = document.getElementById('bear-posts');
+  bullEl.innerHTML = '<p class="no-posts">Loading...</p>';
+  bearEl.innerHTML = '<p class="no-posts">Loading...</p>';
+
   const { data, error } = await supabase
     .from('posts')
     .select('*')

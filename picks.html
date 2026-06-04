@@ -27,33 +27,42 @@
 <div class="page-hero">
   <span class="section-tag">Picks & Debate</span>
   <h2 class="display">Bull vs. <span style="color:var(--red)">Bear.</span></h2>
-  <p style="color:var(--subtle);font-size:0.9rem;max-width:520px;margin-bottom:2.5rem;line-height:1.8;">
+  <p style="color:var(--subtle);font-size:0.9rem;max-width:520px;margin-bottom:2rem;line-height:1.8;">
     Pick a stock, choose your side, and make your case. Posts are live — everyone in the club sees them in real time.
   </p>
 </div>
 
 <div class="section" style="padding-top:0">
 
+  <!-- Custom ticker search -->
+  <div class="ticker-search">
+    <input type="text" id="custom-ticker" placeholder="Enter any ticker, e.g. AAPL" maxlength="10" autocomplete="off" />
+    <button id="ticker-go" class="btn-primary">Go</button>
+  </div>
+
+  <!-- Quick-select tabs -->
   <div class="debate-tabs" id="debate-tabs"></div>
 
+  <!-- Bull / Bear columns -->
   <div class="debate-board">
     <div class="debate-col bull-col">
-      <div class="col-header">🟢 Bullish</div>
+      <div class="col-header">Bullish</div>
       <div id="bull-posts"></div>
     </div>
     <div class="debate-col bear-col">
-      <div class="col-header">🔴 Bearish</div>
+      <div class="col-header">Bearish</div>
       <div id="bear-posts"></div>
     </div>
   </div>
 
+  <!-- Post form -->
   <div class="debate-form-wrap">
     <h3>Make your case</h3>
     <form id="debate-form" novalidate>
       <input type="text" id="debate-name" placeholder="Your name" maxlength="40" />
       <div class="side-toggle">
-        <button type="button" class="side-btn bull-btn active" data-side="bull">🟢 Bull</button>
-        <button type="button" class="side-btn bear-btn" data-side="bear">🔴 Bear</button>
+        <button type="button" class="side-btn bull-btn active" data-side="bull">Bull</button>
+        <button type="button" class="side-btn bear-btn" data-side="bear">Bear</button>
       </div>
       <textarea id="debate-thesis" placeholder="Make your case for this stock..." maxlength="500"></textarea>
       <button type="submit" class="btn-primary">Post</button>
