@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — The Bull Pen</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="logo display" href="index.html">the bull<span>pen</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">About</a></li>
+    <li><a href="picks.html">Picks</a></li>
+    <li><a href="blogs.html" class="active">Blog</a></li>
+    <li><a href="#">Members</a></li>
+    <li><a href="#">Performance</a></li>
+  </ul>
+  <a class="nav-cta" href="index.html#join">Join the Club</a>
+</nav>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<div class="page-hero">
+  <span class="section-tag">Member Blog</span>
+  <div class="page-hero-row">
+    <h2 class="display">The <span style="color:var(--accent)">Feed.</span></h2>
+    <button type="button" class="btn-primary new-debate-btn" id="new-blog-btn">+ New Blog</button>
+  </div>
+  <p style="color:var(--subtle);font-size:0.9rem;max-width:520px;margin-bottom:2rem;line-height:1.8;">
+    Share your thesis, market commentary, or deep dives. Posts are visible to everyone in the club in real time.
+  </p>
+</div>
+
+<!-- Blog editor (hidden by default) -->
+<div class="blog-editor-wrap" id="blog-editor-wrap">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="blog-editor-card">
+      <div class="blog-editor-header">
+        <h3>New Post</h3>
+        <button type="button" class="btn-ghost blog-cancel-btn" id="cancel-blog-btn">Cancel</button>
+      </div>
+
+      <input type="text" id="blog-title" class="blog-input" placeholder="Title" maxlength="120" />
+      <input type="text" id="blog-author" class="blog-input" placeholder="Your name" maxlength="60" />
+
+      <div class="blog-toolbar">
+        <label class="toolbar-img-btn" for="blog-image-input" id="toolbar-img-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          Add Image
+        </label>
+        <input type="file" id="blog-image-input" accept="image/*" style="display:none" />
+        <span class="toolbar-hint">Click in the text area first, then Add Image to place it at the cursor.</span>
+      </div>
+
+      <div
+        class="blog-content-editor"
+        id="blog-content"
+        contenteditable="true"
+        data-placeholder="Write your post here..."
+      ></div>
+
+      <div class="blog-editor-footer">
+        <p class="blog-msg" id="blog-msg"></p>
+        <button type="button" class="btn-primary" id="publish-btn">Publish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Blog feed -->
+<div class="section" style="padding-top:1.5rem">
+  <div id="blogs-feed">
+    <div class="feed-loading">Loading posts...</div>
+  </div>
+</div>
+
+<footer>
+  <a class="footer-logo display" href="index.html">the bull<span>pen</span></a>
+  <div class="footer-note">For educational & recreational use only. Nothing here is financial advice. Always do your own research.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="main.js" defer></script>
+<script src="blog.js" defer></script>
+</body>
+</html>
