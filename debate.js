@@ -1,7 +1,7 @@
 // --- Supabase Setup ---
 const SUPABASE_URL = 'https://aegbhutfgyyzukferxnz.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_GdYba_EgD7uYAn5oFlSVcg_hP2lw2N4';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const DEFAULT_STOCKS = ['NVDA', 'MSFT', 'PLTR', 'TSLA', 'AMZN', 'INTC'];
 let activeStock = DEFAULT_STOCKS[0];
@@ -25,14 +25,20 @@ function updateLabels() {
 
 tickerGoBtn.addEventListener('click', () => {
   const val = tickerInput.value.trim();
-  if (val) setActiveStock(val);
+  if (val) {
+    setActiveStock(val);
+    tickerInput.value = '';
+  }
 });
 
 tickerInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
     const val = tickerInput.value.trim();
-    if (val) setActiveStock(val);
+    if (val) {
+      setActiveStock(val);
+      tickerInput.value = '';
+    }
   }
 });
 
@@ -41,7 +47,7 @@ function renderTabs() {
   const tabs = document.getElementById('debate-tabs');
   const stocks = DEFAULT_STOCKS.includes(activeStock) ? DEFAULT_STOCKS : [...DEFAULT_STOCKS, activeStock];
   tabs.innerHTML = stocks.map(s => `
-    <button class="debate-tab ${s === activeStock ? 'active' : ''}" data-stock="${s}">${s}</button>
+    <button type="button" class="debate-tab ${s === activeStock ? 'active' : ''}" data-stock="${s}">${s}</button>
   `).join('');
   tabs.querySelectorAll('.debate-tab').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -53,7 +59,8 @@ function renderTabs() {
 
 // --- Escape HTML ---
 function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // --- Render single feed post ---
@@ -61,11 +68,11 @@ function renderFeedPost(post) {
   const isBull = post.side === 'bull';
   const time = new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   return `
-    <div class="feed-post ${post.side}">
+    <div class="feed-post ${escapeHtml(post.side)}">
       <div class="feed-post-side-bar"></div>
       <div class="feed-post-body">
         <div class="feed-post-header">
-          <span class="feed-post-badge ${post.side}">${isBull ? 'BULL' : 'BEAR'}</span>
+          <span class="feed-post-badge ${escapeHtml(post.side)}">${isBull ? 'BULL' : 'BEAR'}</span>
           <span class="feed-post-name">${escapeHtml(post.name)}</span>
           <span class="feed-post-stock">${escapeHtml(post.stock)}</span>
           <span class="feed-post-date">${time}</span>
@@ -79,40 +86,41 @@ function renderFeedPost(post) {
 // --- Render full feed ---
 function renderFeed(posts) {
   const feed = document.getElementById('debate-feed');
-  const bullCount = posts.filter(p => p.side === 'bull').length;
-  const bearCount = posts.filter(p => p.side === 'bear').length;
+  const valid = posts.filter(p => p.name && p.thesis);
+  const bullCount = valid.filter(p => p.side === 'bull').length;
+  const bearCount = valid.filter(p => p.side === 'bear').length;
 
   document.getElementById('bull-count').textContent = `${bullCount} Bull`;
   document.getElementById('bear-count').textContent = `${bearCount} Bear`;
 
-  if (!posts.length) {
+  if (!valid.length) {
     feed.innerHTML = '<div class="feed-empty">No debates yet for this ticker — be the first to make a case.</div>';
     return;
   }
 
-  feed.innerHTML = posts.map(renderFeedPost).join('');
+  feed.innerHTML = valid.map(renderFeedPost).join('');
 }
 
 // --- Load Posts ---
 async function loadPosts() {
-  const feed = document.getElementById('debate-feed');
-  feed.innerHTML = '<div class="feed-loading">Loading posts...</div>';
-
-  const { data, error } = await supabase
+  const { data, error } = await _supabase
     .from('posts')
     .select('*')
     .eq('stock', activeStock)
     .order('created_at', { ascending: false });
 
-  if (error) { console.error(error); return; }
+  if (error) {
+    console.error('loadPosts error:', error);
+    return;
+  }
   renderFeed(data);
 }
 
 // --- Real-time Subscription ---
-supabase
+_supabase
   .channel('posts-changes')
-  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, payload => {
-    if (payload.new.stock === activeStock) loadPosts();
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
+    loadPosts();
   })
   .subscribe();
 
@@ -135,8 +143,7 @@ debateForm.addEventListener('submit', async (e) => {
   const thesis = document.getElementById('debate-thesis').value.trim();
 
   if (!name || !thesis) {
-    debateMsg.textContent = 'Please fill in your name and thesis.';
-    debateMsg.className = 'debate-msg error';
+    showMsg('Please fill in your name and your thesis.', 'error');
     return;
   }
 
@@ -146,7 +153,7 @@ debateForm.addEventListener('submit', async (e) => {
   debateMsg.textContent = '';
   debateMsg.className = 'debate-msg';
 
-  const { error } = await supabase.from('posts').insert({
+  const { error } = await _supabase.from('posts').insert({
     stock: activeStock,
     name,
     side: activeSide,
@@ -154,23 +161,26 @@ debateForm.addEventListener('submit', async (e) => {
   });
 
   if (error) {
-    debateMsg.textContent = '✗ Something went wrong. Try again.';
-    debateMsg.className = 'debate-msg error';
+    console.error('Insert error:', error);
+    showMsg('Something went wrong — try again.', 'error');
   } else {
-    debateMsg.textContent = '✓ Post submitted!';
-    debateMsg.className = 'debate-msg success';
+    showMsg('Posted! Scroll up to see your debate.', 'success');
     debateForm.reset();
     activeSide = 'bull';
     document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
     document.querySelector('.bull-btn').classList.add('active');
-    // Scroll to feed so user sees their post
+    await loadPosts();
     document.querySelector('.debate-feed-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    loadPosts();
   }
 
   submitBtn.textContent = 'Post';
   submitBtn.disabled = false;
 });
+
+function showMsg(text, type) {
+  debateMsg.textContent = type === 'success' ? `✓ ${text}` : `✗ ${text}`;
+  debateMsg.className = `debate-msg ${type}`;
+}
 
 // --- Init ---
 renderTabs();
