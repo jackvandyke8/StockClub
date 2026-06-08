@@ -26,7 +26,10 @@
 
 <div class="page-hero">
   <span class="section-tag">Picks & Debate</span>
-  <h2 class="display">Bull vs. <span style="color:var(--red)">Bear.</span></h2>
+  <div class="page-hero-row">
+    <h2 class="display">Bull vs. <span style="color:var(--red)">Bear.</span></h2>
+    <a href="#new-debate" class="btn-primary new-debate-btn">+ New Debate</a>
+  </div>
   <p style="color:var(--subtle);font-size:0.9rem;max-width:520px;margin-bottom:2rem;line-height:1.8;">
     Pick a stock, choose your side, and make your case. Posts are live — everyone in the club sees them in real time.
   </p>
@@ -43,21 +46,26 @@
   <!-- Quick-select tabs -->
   <div class="debate-tabs" id="debate-tabs"></div>
 
-  <!-- Bull / Bear columns -->
-  <!-- <div class="debate-board">
-    <div class="debate-col bull-col">
-      <div class="col-header">Bullish</div>
-      <div id="bull-posts"></div>
+  <!-- Live feed -->
+  <div class="debate-feed-wrap">
+    <div class="feed-header">
+      <span class="feed-title" id="feed-title">NVDA — Live Debate</span>
+      <div class="feed-counts">
+        <span class="feed-count bull-count" id="bull-count">0 Bull</span>
+        <span class="feed-count bear-count" id="bear-count">0 Bear</span>
+      </div>
     </div>
-    <div class="debate-col bear-col">
-      <div class="col-header">Bearish</div>
-      <div id="bear-posts"></div>
+    <div class="debate-feed" id="debate-feed">
+      <div class="feed-loading">Loading posts...</div>
     </div>
-  </div> -->
+  </div>
 
   <!-- Post form -->
-  <div class="debate-form-wrap">
-    <h3>Make your case</h3>
+  <div class="debate-form-wrap" id="new-debate">
+    <div class="form-header">
+      <h3>Make your case</h3>
+      <span class="form-ticker-label" id="form-ticker-label">for <strong>NVDA</strong></span>
+    </div>
     <form id="debate-form" novalidate>
       <input type="text" id="debate-name" placeholder="Your name" maxlength="40" />
       <div class="side-toggle">

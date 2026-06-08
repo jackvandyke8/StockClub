@@ -14,7 +14,13 @@ const tickerGoBtn = document.getElementById('ticker-go');
 function setActiveStock(sym) {
   activeStock = sym.toUpperCase().trim();
   renderTabs();
+  updateLabels();
   loadPosts();
+}
+
+function updateLabels() {
+  document.getElementById('feed-title').textContent = `${activeStock} — Live Debate`;
+  document.getElementById('form-ticker-label').innerHTML = `for <strong>${activeStock}</strong>`;
 }
 
 tickerGoBtn.addEventListener('click', () => {
@@ -45,45 +51,52 @@ function renderTabs() {
   });
 }
 
-// --- Render Posts ---
+// --- Escape HTML ---
 function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function renderPost(post) {
+// --- Render single feed post ---
+function renderFeedPost(post) {
+  const isBull = post.side === 'bull';
   const time = new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   return `
-    <div class="debate-post ${post.side}">
-      <div class="post-header">
-        <span class="post-name">${escapeHtml(post.name)}</span>
-        <span class="post-date">${time}</span>
+    <div class="feed-post ${post.side}">
+      <div class="feed-post-side-bar"></div>
+      <div class="feed-post-body">
+        <div class="feed-post-header">
+          <span class="feed-post-badge ${post.side}">${isBull ? 'BULL' : 'BEAR'}</span>
+          <span class="feed-post-name">${escapeHtml(post.name)}</span>
+          <span class="feed-post-stock">${escapeHtml(post.stock)}</span>
+          <span class="feed-post-date">${time}</span>
+        </div>
+        <p class="feed-post-thesis">${escapeHtml(post.thesis)}</p>
       </div>
-      <p class="post-thesis">${escapeHtml(post.thesis)}</p>
     </div>
   `;
 }
 
-function renderPosts(posts) {
-  const bullEl = document.getElementById('bull-posts');
-  const bearEl = document.getElementById('bear-posts');
-  const bulls = posts.filter(p => p.side === 'bull');
-  const bears = posts.filter(p => p.side === 'bear');
+// --- Render full feed ---
+function renderFeed(posts) {
+  const feed = document.getElementById('debate-feed');
+  const bullCount = posts.filter(p => p.side === 'bull').length;
+  const bearCount = posts.filter(p => p.side === 'bear').length;
 
-  bullEl.innerHTML = bulls.length
-    ? bulls.map(renderPost).join('')
-    : '<p class="no-posts">No bulls yet — be the first.</p>';
+  document.getElementById('bull-count').textContent = `${bullCount} Bull`;
+  document.getElementById('bear-count').textContent = `${bearCount} Bear`;
 
-  bearEl.innerHTML = bears.length
-    ? bears.map(renderPost).join('')
-    : '<p class="no-posts">No bears yet — make your case.</p>';
+  if (!posts.length) {
+    feed.innerHTML = '<div class="feed-empty">No debates yet for this ticker — be the first to make a case.</div>';
+    return;
+  }
+
+  feed.innerHTML = posts.map(renderFeedPost).join('');
 }
 
 // --- Load Posts ---
 async function loadPosts() {
-  const bullEl = document.getElementById('bull-posts');
-  const bearEl = document.getElementById('bear-posts');
-  bullEl.innerHTML = '<p class="no-posts">Loading...</p>';
-  bearEl.innerHTML = '<p class="no-posts">Loading...</p>';
+  const feed = document.getElementById('debate-feed');
+  feed.innerHTML = '<div class="feed-loading">Loading posts...</div>';
 
   const { data, error } = await supabase
     .from('posts')
@@ -92,7 +105,7 @@ async function loadPosts() {
     .order('created_at', { ascending: false });
 
   if (error) { console.error(error); return; }
-  renderPosts(data);
+  renderFeed(data);
 }
 
 // --- Real-time Subscription ---
@@ -150,6 +163,8 @@ debateForm.addEventListener('submit', async (e) => {
     activeSide = 'bull';
     document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
     document.querySelector('.bull-btn').classList.add('active');
+    // Scroll to feed so user sees their post
+    document.querySelector('.debate-feed-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
     loadPosts();
   }
 
@@ -159,4 +174,5 @@ debateForm.addEventListener('submit', async (e) => {
 
 // --- Init ---
 renderTabs();
+updateLabels();
 loadPosts();
