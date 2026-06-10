@@ -415,6 +415,9 @@ svg.sparkline { width: 100%; height: 120px; }
   padding-top: 0.75rem;
   border-top: 1px solid var(--border);
   margin-top: 0.5rem;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
 }
 .blog-full.visible { display: block; }
 .blog-full img, .blog-full-inline img {
