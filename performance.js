@@ -109,8 +109,10 @@ function renderTable(holdings, quotes) {
     const gainPct = (gain != null && costTotal) ? (gain / costTotal) * 100 : null;
     const gainUp = gain == null ? true : gain >= 0;
 
-    if (marketVal) totalValue += marketVal;
-    if (costTotal) totalCost += costTotal;
+    if (marketVal != null && costTotal != null) {
+      totalValue += marketVal;
+      totalCost += costTotal;
+    }
 
     return `<tr>
       <td class="sym display">${h.symbol}</td>
