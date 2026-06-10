@@ -94,6 +94,7 @@ h1 .accent { color: var(--accent); }
 .meta-label { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 .meta-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; }
 .meta-val.green { color: var(--accent); }
+.meta-val.red { color: var(--red); }
 .meta-val.gold { color: var(--gold); }
 .chart-body { padding: 1.25rem; }
 svg.sparkline { width: 100%; height: 120px; }

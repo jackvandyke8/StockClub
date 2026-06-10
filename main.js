@@ -112,8 +112,68 @@ async function loadPicks() {
   }
 }
 
+// --- Homepage stats (chart card + stats bar) ---
+async function loadHomeStats() {
+  if (!_sb) return;
+
+  try {
+    const [
+      { data: portfolio },
+      { data: quotes },
+      { count: postCount },
+    ] = await Promise.all([
+      _sb.from('portfolio').select('symbol,shares,cost_basis'),
+      _sb.from('quotes_cache').select('symbol,price,change'),
+      _sb.from('posts').select('*', { count: 'exact', head: true }),
+    ]);
+
+    if (!portfolio?.length || !quotes?.length) return;
+
+    const quoteMap = Object.fromEntries(quotes.map(q => [q.symbol, q]));
+
+    let totalValue = 0, totalCost = 0;
+    let bestSym = null, bestGainPct = -Infinity;
+
+    for (const h of portfolio) {
+      const q = quoteMap[h.symbol];
+      if (!q?.price || !h.shares || !h.cost_basis) continue;
+      const mv = q.price * h.shares;
+      const cost = h.cost_basis * h.shares;
+      const gp = (mv - cost) / cost * 100;
+      totalValue += mv;
+      totalCost += cost;
+      if (gp > bestGainPct) { bestGainPct = gp; bestSym = h.symbol; }
+    }
+
+    if (!totalCost) return;
+
+    const retPct = ((totalValue - totalCost) / totalCost * 100).toFixed(1);
+    const isUp = totalValue >= totalCost;
+    const retStr = (isUp ? '+' : '') + retPct + '%';
+
+    const chartReturn = document.getElementById('chart-total-return');
+    if (chartReturn) {
+      chartReturn.textContent = retStr;
+      chartReturn.className = 'meta-val ' + (isUp ? 'green' : 'red');
+    }
+
+    const chartBest = document.getElementById('chart-best-pick');
+    if (chartBest && bestSym) chartBest.textContent = bestSym;
+
+    const statYtd = document.getElementById('stat-ytd');
+    if (statYtd) {
+      statYtd.textContent = retStr;
+      statYtd.className = 'stat-num ' + (isUp ? 'up' : 'down');
+    }
+
+    const statPicks = document.getElementById('stat-picks');
+    if (statPicks && postCount != null) statPicks.textContent = postCount;
+  } catch {}
+}
+
 loadTicker();
 loadPicks();
+loadHomeStats();
 
 // --- Formspree Email Signup (homepage only) ---
 const joinForm = document.getElementById('join-form');

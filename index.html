@@ -41,8 +41,8 @@
       <span class="chart-badge">Live</span>
     </div>
     <div class="chart-meta">
-      <div class="meta-item"><span class="meta-label">Total Return</span><span class="meta-val green">+18.4%</span></div>
-      <div class="meta-item"><span class="meta-label">Best Pick</span><span class="meta-val gold">NVDA</span></div>
+      <div class="meta-item"><span class="meta-label">Total Return</span><span class="meta-val green" id="chart-total-return">+18.4%</span></div>
+      <div class="meta-item"><span class="meta-label">Best Pick</span><span class="meta-val gold" id="chart-best-pick">NVDA</span></div>
       <div class="meta-item"><span class="meta-label">Members</span><span class="meta-val">24</span></div>
     </div>
     <div class="chart-body">
@@ -66,8 +66,8 @@
 
 <div class="stats-bar">
   <div class="stat-cell"><span class="stat-num">24</span><span class="stat-label">Active Members</span></div>
-  <div class="stat-cell"><span class="stat-num">+18.4%</span><span class="stat-label">YTD Returns</span></div>
-  <div class="stat-cell"><span class="stat-num">47</span><span class="stat-label">Picks Made</span></div>
+  <div class="stat-cell"><span class="stat-num" id="stat-ytd">+18.4%</span><span class="stat-label">YTD Returns</span></div>
+  <div class="stat-cell"><span class="stat-num" id="stat-picks">47</span><span class="stat-label">Picks Made</span></div>
   <div class="stat-cell"><span class="stat-num">$0</span><span class="stat-label">Membership Fee</span></div>
 </div>
 
@@ -114,6 +114,7 @@
   <div class="footer-note">For educational & recreational use only. Nothing here is financial advice. Always do your own research.</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="main.js" defer></script>
 </body>
 </html>
