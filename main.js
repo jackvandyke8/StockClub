@@ -1,9 +1,11 @@
-const SUPABASE_URL = 'https://aegbhutfgyyzukferxnz.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_GdYba_EgD7uYAn5oFlSVcg_hP2lw2N4';
-
-// Supabase is only available on pages that load the CDN script
+// Supabase is only available on pages that load the CDN script.
+// Intentionally not named SUPABASE_URL/KEY to avoid redeclaration conflict
+// with debate.js and blog.js which declare those same const names.
 const _sb = (typeof window !== 'undefined' && window.supabase)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+  ? window.supabase.createClient(
+      'https://aegbhutfgyyzukferxnz.supabase.co',
+      'sb_publishable_GdYba_EgD7uYAn5oFlSVcg_hP2lw2N4'
+    )
   : null;
 
 // --- Ticker ---
