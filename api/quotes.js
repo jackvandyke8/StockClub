@@ -1,11 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
 const SUPABASE_URL = 'https://aegbhutfgyyzukferxnz.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const AV_KEY = process.env.ALPHA_VANTAGE_KEY;
 const CACHE_TTL_MINUTES = 15;
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   const { symbols } = req.query;
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Check cache — return rows that are fresh enough
+  // Return cached rows that are still fresh
   const cutoff = new Date(Date.now() - CACHE_TTL_MINUTES * 60 * 1000).toISOString();
   const { data: cached } = await sb
     .from('quotes_cache')
@@ -29,7 +29,6 @@ export default async function handler(req, res) {
 
   let fresh = [];
   if (stale.length > 0 && AV_KEY) {
-    // Alpha Vantage BATCH_STOCK_QUOTES — one call for all stale tickers
     const url = `https://www.alphavantage.co/query?function=BATCH_STOCK_QUOTES&symbols=${stale.join(',')}&apikey=${AV_KEY}`;
     try {
       const avRes = await fetch(url);
@@ -54,7 +53,6 @@ export default async function handler(req, res) {
   }
 
   const all = [...(cached || []), ...fresh];
-  // Return in same order as requested, keyed by symbol
   const bySymbol = Object.fromEntries(all.map(r => [r.symbol, r]));
   res.status(200).json(bySymbol);
-}
+};
