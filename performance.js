@@ -15,7 +15,7 @@ function parseCSV(text) {
       symbol: ['symbol', 'ticker', 'sym'],
       company: ['company', 'name', 'security', 'description'],
       shares: ['shares', 'quantity', 'qty', 'units'],
-      cost: ['cost basis', 'cost/share', 'avg cost', 'cost', 'average cost', 'purchase price'],
+      cost: ['cost per share', 'cost basis', 'cost/share', 'avg cost', 'basis usd', 'cost', 'average cost', 'purchase price'],
     };
     for (const alias of aliases[name]) {
       const idx = headers.findIndex(h => h.includes(alias));
