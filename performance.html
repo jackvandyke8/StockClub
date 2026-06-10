@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance — The Bull Pen</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <a class="logo display" href="index.html">the bull<span>pen</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">About</a></li>
+    <li><a href="picks.html">Picks</a></li>
+    <li><a href="blogs.html">Blog</a></li>
+    <li><a href="#">Members</a></li>
+    <li><a href="performance.html" class="active">Performance</a></li>
+  </ul>
+  <a class="nav-cta" href="index.html#join">Join the Club</a>
+</nav>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-row">
+    <span class="section-tag">Portfolio</span>
+  </div>
+  <h1 class="display">Performance <span class="accent">Tracker</span></h1>
+  <p class="hero-desc">Live portfolio data powered by your StockRover export and real-time quotes.</p>
+</div>
+
+<div class="section" style="padding-top:0">
+  <!-- Summary stats bar -->
+  <div class="perf-stats" id="perf-stats" style="display:none">
+    <div class="stat-cell"><span class="stat-num" id="stat-total-value">—</span><span class="stat-label">Total Value</span></div>
+    <div class="stat-cell"><span class="stat-num" id="stat-total-gain">—</span><span class="stat-label">Total Gain / Loss</span></div>
+    <div class="stat-cell"><span class="stat-num" id="stat-total-pct">—</span><span class="stat-label">Return %</span></div>
+    <div class="stat-cell"><span class="stat-num" id="stat-positions">—</span><span class="stat-label">Positions</span></div>
+  </div>
+
+  <!-- Portfolio table -->
+  <div class="perf-table-wrap" id="perf-table-wrap">
+    <table class="perf-table" id="perf-table" style="display:none">
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Company</th>
+          <th class="num">Shares</th>
+          <th class="num">Cost Basis</th>
+          <th class="num">Live Price</th>
+          <th class="num">Market Value</th>
+          <th class="num">Gain / Loss</th>
+          <th class="num">Return %</th>
+          <th class="num">Today</th>
+        </tr>
+      </thead>
+      <tbody id="perf-tbody"></tbody>
+    </table>
+    <div class="perf-empty" id="perf-empty">
+      <p class="muted">No portfolio data yet. Upload a StockRover CSV below to get started.</p>
+    </div>
+  </div>
+
+  <!-- CSV Upload -->
+  <div class="upload-card" id="upload-card">
+    <div class="upload-header">
+      <span class="section-tag">Import Holdings</span>
+      <h3 class="display">Upload StockRover CSV</h3>
+      <p class="muted" style="margin:0.5rem 0 1.5rem">Export your holdings from StockRover → Research → Holdings → Export CSV. The file should include columns: Symbol, Company, Shares (or Quantity), Cost (or Cost Basis).</p>
+    </div>
+    <label class="upload-zone" id="upload-zone" for="csv-input">
+      <div class="upload-icon">↑</div>
+      <div class="upload-label">Drop CSV here or <span class="accent">click to browse</span></div>
+      <div class="upload-hint muted" id="upload-hint">No file selected</div>
+      <input type="file" id="csv-input" accept=".csv" style="display:none">
+    </label>
+    <div class="upload-actions">
+      <button class="btn-primary" id="upload-btn" disabled>Import Holdings</button>
+      <span class="upload-msg" id="upload-msg"></span>
+    </div>
+  </div>
+
+  <p class="muted" style="font-size:0.75rem;margin-top:2rem;text-align:center">
+    Prices refresh every 15 minutes via Alpha Vantage free tier. For educational use only — not financial advice.
+  </p>
+</div>
+
+<footer>
+  <a class="footer-logo display" href="index.html">the bull<span>pen</span></a>
+  <div class="footer-note">For educational & recreational use only. Nothing here is financial advice. Always do your own research.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="main.js" defer></script>
+<script src="performance.js" defer></script>
+</body>
+</html>
