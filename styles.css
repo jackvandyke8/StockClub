@@ -501,7 +501,6 @@ svg.sparkline { width: 100%; height: 120px; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 2rem;
-  max-width: 600px;
 }
 .upload-header h3 { margin: 0.4rem 0 0; font-size: 1.25rem; }
 
